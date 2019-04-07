@@ -8,10 +8,12 @@ const server = express()
 
 server.use(bodyParser.json(), app);
 
-// server.use('/', (req, res) => {
-//     res.writeHead(200)
-//     res.end('Bam')
-// })
+app.use(express.static(__dirname + '/public', {dotfiles: 'allow'}))
+
+server.use('/test', (req, res) => {
+    res.writeHead(200)
+    res.end('Bam')
+})
 
 server.listen(80)
 server.listen(443)
