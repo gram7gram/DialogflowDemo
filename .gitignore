@@ -1,0 +1,5 @@
+.idea
+app/package-lock.json
+app/node_modules
+docker-compose.yml
+.persistency

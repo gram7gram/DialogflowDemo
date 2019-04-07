@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+
+  proxy:
+    image: jwilder/nginx-proxy:alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    networks:
+      - backend
+    volumes:
+      - '/var/run/docker.sock:/tmp/docker.sock:ro'
+# Uncomment after SSL certificate creation
+#      - '/etc/letsencrypt/live/dialogflow.gram7gram.tk/fullchain.pem:/etc/nginx/certs/dialogflow.gram7gram.tk.crt'
+#      - '/etc/letsencrypt/live/dialogflow.gram7gram.tk/privkey.pem:/etc/nginx/certs/dialogflow.gram7gram.tk.key'
+
+  app:
+    image: node:11-alpine
+    restart: unless-stopped
+    command: "npm start"
+#    ports:
+#      - '9000:80'
+#      - '9001:443'
+    environment:
+      - VIRTUAL_HOST=dialogflow.gram7gram.tk
+      - NODE_ENV=production
+    networks:
+      - backend
+    working_dir: /home/node/app
+    volumes:
+      - './app:/home/node/app'
+
+  db:
+    image: mongo:4
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=~
+    networks:
+      - backend
+    volumes:
+      - '.persistency/mongo/data:/data/db'
+
+networks:
+  backend:
+    driver: "bridge"
